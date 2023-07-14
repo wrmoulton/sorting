@@ -1,21 +1,108 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <string.h>
 int extraMemoryAllocated;
-
+void swap(int *a,int*b){
+	int temp = *a;
+	*a=*b;
+	*b=temp;
+}
+void heapify(int arr[],int n,int i){
+	int root = i;
+		int left = 2 * i +1;
+		int right = 2*i + 2;
+		if(left<n && arr[left]>arr[root])
+			root = left;
+		if(right < n && arr[right]>arr[root])
+			root = right;
+		if (root != i){
+			swap(&arr[i],&arr[root]);
+			heapify(arr,n,root);
+		}
+}
 // implements heap sort
 // extraMemoryAllocated counts bytes of memory allocated
 void heapSort(int arr[], int n)
 {
+    int swapnum = n / 2 - 1;
+
+    for (int i = swapnum; i >= 0; i--)
+    {
+        heapify(arr, n, i);
+    }
+    for (int i = n - 1; i > 0; i--)
+    {
+        swap(&arr[i], &arr[0]);
+        heapify(arr, i, 0);
+    }
 }
 
-
-// implement merge sort
-// extraMemoryAllocated counts bytes of extra memory allocated
-void mergeSort(int pData[], int l, int r)
+void merge(int arr[], int l, int m, int r)
 {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    extraMemoryAllocated += 2;
+    int* L = (int*)malloc(sizeof(int) * n1);
+    int* R = (int*)malloc(sizeof(int) * n2);
+
+    // Copy data to temp arrays L[] and R[]
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    // Merge the temp arrays back into arr[l..r]
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        }
+        else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if there are any
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if there are any
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+
+    free(L);
+    free(R);
 }
+
+void mergeSort(int arr[], int l, int r)
+{
+    if (l < r) {
+        int m = l + (r - l) / 2;
+
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+
+        merge(arr, l, m, r);
+    }
+}
+
+
+
+
 
 // parses input file to an integer array
 int parseData(char *inputFileName, int **ppData)
@@ -28,6 +115,7 @@ int parseData(char *inputFileName, int **ppData)
 	if (inFile)
 	{
 		fscanf(inFile,"%d\n",&dataSz);
+		
 		*ppData = (int *)malloc(sizeof(int) * dataSz);
 		// Implement parse data block
 		if (*ppData == NULL)
@@ -68,6 +156,7 @@ void printArray(int pData[], int dataSz)
 
 int main(void)
 {
+	
 	clock_t start, end;
 	int i;
     double cpu_time_used;
@@ -77,12 +166,11 @@ int main(void)
 	{
 		int *pDataSrc, *pDataCopy;
 		int dataSz = parseData(fileNames[i], &pDataSrc);
-		
+		printf("%d",dataSz);
 		if (dataSz <= 0)
 			continue;
-		
 		pDataCopy = (int *)malloc(sizeof(int)*dataSz);
-	
+		
 		printf("---------------------------\n");
 		printf("Dataset Size : %d\n",dataSz);
 		printf("---------------------------\n");
@@ -94,7 +182,7 @@ int main(void)
 		heapSort(pDataCopy, dataSz);
 		end = clock();
 		cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-		printf("\truntime\t\t\t: %.1lf\n",cpu_time_used);
+		printf("\truntime\t\t\t: %.4lf\n",cpu_time_used);
 		printf("\textra memory allocated\t: %d\n",extraMemoryAllocated);
 		printArray(pDataCopy, dataSz);
 		
@@ -105,7 +193,7 @@ int main(void)
 		mergeSort(pDataCopy, 0, dataSz - 1);
 		end = clock();
 		cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-		printf("\truntime\t\t\t: %.1lf\n",cpu_time_used);
+		printf("\truntime\t\t\t: %.4lf\n",cpu_time_used);
 		printf("\textra memory allocated\t: %d\n",extraMemoryAllocated);
 		printArray(pDataCopy, dataSz);
 		
