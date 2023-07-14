@@ -21,8 +21,7 @@ void heapify(int arr[],int n,int i){
 			heapify(arr,n,root);
 		}
 }
-// implements heap sort
-// extraMemoryAllocated counts bytes of memory allocated
+
 void heapSort(int arr[], int n)
 {
     int swapnum = n / 2 - 1;
@@ -48,13 +47,13 @@ void merge(int arr[], int l, int m, int r)
     int* L = (int*)malloc(sizeof(int) * n1);
     int* R = (int*)malloc(sizeof(int) * n2);
 
-    // Copy data to temp arrays L[] and R[]
+
     for (i = 0; i < n1; i++)
         L[i] = arr[l + i];
     for (j = 0; j < n2; j++)
         R[j] = arr[m + 1 + j];
 
-    // Merge the temp arrays back into arr[l..r]
+
     i = 0;
     j = 0;
     k = l;
@@ -70,14 +69,14 @@ void merge(int arr[], int l, int m, int r)
         k++;
     }
 
-    // Copy the remaining elements of L[], if there are any
+
     while (i < n1) {
         arr[k] = L[i];
         i++;
         k++;
     }
 
-    // Copy the remaining elements of R[], if there are any
+
     while (j < n2) {
         arr[k] = R[j];
         j++;
@@ -104,7 +103,7 @@ void mergeSort(int arr[], int l, int r)
 
 
 
-// parses input file to an integer array
+
 int parseData(char *inputFileName, int **ppData)
 {
 	FILE* inFile = fopen(inputFileName,"r");
@@ -136,7 +135,7 @@ int parseData(char *inputFileName, int **ppData)
 	return dataSz;
 }
 
-// prints first and last 100 items in the data array
+
 void printArray(int pData[], int dataSz)
 {
 	int i, sz = dataSz - 100;
